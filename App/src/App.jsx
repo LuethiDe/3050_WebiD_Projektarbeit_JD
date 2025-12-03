@@ -1,6 +1,7 @@
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { Map } from "./Map";
+//import { useState } from "react";
 
 import "./App.css";
 import "leaflet/dist/leaflet.css";
@@ -10,9 +11,7 @@ function App() {
     <div className="app">
       <Header />
       <Sidebar />
-      <div className="mainArea">
-        <Map />
-      </div>
+      <div className="main">{<Map />}</div>
     </div>
   );
 }
