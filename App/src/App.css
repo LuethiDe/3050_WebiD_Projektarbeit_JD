@@ -40,7 +40,7 @@ body {
 /*---- Buttons ---- */
 
 .button {
-  border-radius: 5px;
+  border-radius: 20px;
   margin-top: 7.5px;
   margin-right: 10px;
   background-color: #1c1c1c;
@@ -54,7 +54,7 @@ body {
 .buttonHover:hover {
   background-color: #0cf574;
   border: 1px solid #0cf574;
-  border-radius: 15px;
+  border-radius: 20px;
   color: black;
 }
 
@@ -71,13 +71,13 @@ body {
 }
 
 .text {
-  font-family: Andale Mono;
-  font-weight: bolder;
+  font-family: Courier New;
+  /*font-weight: bolder;*/
   font-size: 20px;
   color: rgb(0, 0, 0);
-  width: 110px;
-  margin-left: 5px;
-  text-align: center;
+  width: 100%;
+  margin-left: 25px;
+  /*text-align: center;*/
 }
 
 .h1 {

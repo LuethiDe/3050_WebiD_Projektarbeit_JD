@@ -1,4 +1,4 @@
-export const Header = () => (
+export const Header = ({ meme, setMeme }) => (
   <div className="header">
     <h1
       id="title"
@@ -13,7 +13,9 @@ export const Header = () => (
         flexGrow: "2",
       }}
     ></div>
-    <button className="button buttonHover"> ---Test---</button>
+    <button onClick={() => setMeme(!meme)} className="button buttonHover">
+      ---Meme---
+    </button>
     <button
       className="button buttonHover"
       style={{
