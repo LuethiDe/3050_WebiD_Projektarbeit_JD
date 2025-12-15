@@ -14,37 +14,63 @@ body {
 
 .header {
   display: flex;
+  width: 100%;
   flex-direction: row;
   justify-content: center;
   height: 80px;
+  border-radius: 20px;
   min-height: 5vh;
-  width: 100%;
   grid-column: 1 / -1;
-  background: #1c1c1c;
-  /*border-bottom: 1px solid grey;*/
+  background: #f0f0f0a9;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.preface {
+  height: 500px;
+  padding: 20px 20px 20px;
+  background-image: url(https://www.zuerich.com/sites/default/files/styles/1920_1152_focal_scale_crop/public/imagegallery/web_zurich_sigthseeing_bahnhofstrasse_02.jpg?h=2020-08-14T16:41:13+02:00);
+  background-size: cover;
+  background-position: bottom;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.aside {
-  background: #d8d8d8;
-  border-right: 1px solid grey;
+.boardsPreface {
+  padding: 50px;
+  background: #f0f0f0a9;
+  border-radius: 20px;
 }
-.main {
-  background: #d8d8d8;
+
+.boardsPrefaceHover:hover {
+  background-color: #0576b3cd;
+  opacity: 1;
+  border-radius: 20px;
+  color: black;
+}
+
+.content {
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
 }
 
+.boards_content {
+  background: #f0f0f0a9;
+  border-radius: 20px;
+}
+
 /*---- Buttons ---- */
 
 .button {
   border-radius: 20px;
-  margin-top: 7.5px;
-  margin-right: 10px;
-  background-color: #1c1c1c;
-  color: white;
+  background-position: center;
+  margin: 10px;
+  background: #f0f0f0a9;
+  color: black;
   font-family: Andale Mono;
   font-size: 16px;
   transition: background-color 0.3s ease;
@@ -52,8 +78,9 @@ body {
 }
 
 .buttonHover:hover {
-  background-color: #0cf574;
-  border: 1px solid #0cf574;
+  background-color: #0576b3;
+  border: 1px solid #0576b3;
+  opacity: 1;
   border-radius: 20px;
   color: black;
 }
@@ -64,7 +91,7 @@ body {
   font-family: Andale Mono;
   font-weight: bolder;
   font-size: 35px;
-  color: white;
+  color: rgb(0, 0, 0);
   width: 110px;
   margin-left: 5px;
   text-align: center;

@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
 export const Map = ({ info, meme }) => {
   return (
     <div>
-      <div className="aside">
+      <div className="boards">
         <h3 className="text">App Info</h3>
         <p className="text">Message: {info.message}</p>
         <p className="text">Version: {info.version}</p>

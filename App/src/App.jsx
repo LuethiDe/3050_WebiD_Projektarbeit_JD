@@ -31,7 +31,7 @@ function App() {
     <div className="app">
       <Header meme={meme} setMeme={setMeme} />
       {/* <Sidebar />*/}
-      <div className="main">
+      <div className="content">
         {<Map setInfo={setInfo} info={info} meme={meme} setMeme={setMeme} />}
       </div>
     </div>
