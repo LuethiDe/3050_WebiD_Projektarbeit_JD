@@ -27,7 +27,7 @@ body {
 }
 
 .preface {
-  height: 500px;
+  height: 400px;
   padding: 20px 20px 20px;
   background-image: url(https://www.zuerich.com/sites/default/files/styles/1920_1152_focal_scale_crop/public/imagegallery/web_zurich_sigthseeing_bahnhofstrasse_02.jpg?h=2020-08-14T16:41:13+02:00);
   background-size: cover;
@@ -44,10 +44,9 @@ body {
 }
 
 .boardsPrefaceHover:hover {
-  background-color: #0576b3cd;
+  background-color: #0576b388;
   opacity: 1;
   border-radius: 20px;
-  color: black;
 }
 
 .content {
@@ -78,8 +77,8 @@ body {
 }
 
 .buttonHover:hover {
-  background-color: #0576b3;
-  border: 1px solid #0576b3;
+  background-color: #0576b36b;
+  border: 1px solid #0576b36b;
   opacity: 1;
   border-radius: 20px;
   color: black;
@@ -98,16 +97,15 @@ body {
 }
 
 .text {
-  font-family: Courier New;
-  /*font-weight: bolder;*/
-  font-size: 20px;
+  font-family: Andale Mono;
+  font-size: 15px;
   color: rgb(0, 0, 0);
   width: 100%;
-  margin-left: 25px;
-  /*text-align: center;*/
 }
 
-.h1 {
+.textHover:hover {
   font-family: Andale Mono;
-  font-weight: bolder;
+  font-size: 15px;
+  color: #ffffff;
+  width: 100%;
 }

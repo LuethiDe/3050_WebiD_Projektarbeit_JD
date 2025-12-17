@@ -11,7 +11,7 @@ function App() {
   const [meme, setMeme] = useState(false);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/v1.0/info")
+    fetch("http://127.0.0.1:8000/v1.0/pedData")
       .then((response) => {
         console.log("Response status:", response.status);
         return response.json();
