@@ -1,41 +1,148 @@
+import { useEffect, useMemo, useState } from "react";
+import dayjs from "dayjs";
+
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
-import { Map } from "./Map";
-import { useState, useEffect } from "react";
+import { Map as JsonOut } from "./Map";
 
 import "./App.css";
-import "leaflet/dist/leaflet.css";
 
-function App() {
-  const [info, setInfo] = useState(null);
-  const [meme, setMeme] = useState(false);
+const API_BASE = "http://localhost:8000";
+
+function buildPedUrl({ ort, datum, zone }) {
+  const url = new URL(`${API_BASE}/api/v1/pedData`);
+  url.searchParams.set("ort", ort);
+  url.searchParams.set("datum", datum);
+  url.searchParams.set("zone", zone);
+  return url.toString();
+}
+
+function buildLocationsUrl(datum) {
+  const url = new URL(`${API_BASE}/api/v1/Locations`);
+  url.searchParams.set("datum", datum);
+  return url.toString();
+}
+
+export default function App() {
+  const [date, setDate] = useState(dayjs().subtract(1, "day"));
+  const [locations, setLocations] = useState([]);
+  const [location, setLocation] = useState("");
+  const [zone, setZone] = useState("all");
+  const [group, setGroup] = useState("all"); // all | children | adults
+  const [weather, setWeather] = useState("all"); // all | rain | ...
+
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const datum = useMemo(() => date.format("YYYY-MM-DD"), [date]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/v1.0/pedData")
-      .then((response) => {
-        console.log("Response status:", response.status);
-        return response.json();
+    setError(null);
+    fetch(buildLocationsUrl(datum))
+      .then((r) => r.json())
+      .then((payload) => {
+        const list = Array.isArray(payload) && payload[0]?.locations ? payload[0].locations : [];
+        setLocations(list);
+        if (!location && list.length) setLocation(list[0]);
+        if (location && list.length && !list.includes(location)) setLocation(list[0]);
       })
-      .then((data) => {
-        console.log("Backend-Daten:", data);
-        setInfo(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching info:", error);
+      .catch((e) => {
+        setLocations([]);
+        setError(String(e));
       });
-  }, []);
+  }, [datum]);
 
-  if (!info) return <div>Computer says no...</div>;
+  useEffect(() => {
+    if (!location) return;
+
+    setLoading(true);
+    setError(null);
+
+    fetch(buildPedUrl({ ort: location, datum, zone }))
+      .then((r) => r.json())
+      .then((data) => {
+        const arr = Array.isArray(data) ? data : [];
+        setRows(arr);
+      })
+      .catch((e) => {
+        setRows([]);
+        setError(String(e));
+      })
+      .finally(() => setLoading(false));
+  }, [location, datum, zone]);
+
+  const filtered = useMemo(() => {
+    let out = rows;
+
+    if (weather !== "all") {
+      out = out.filter((r) => r.weather_condition === weather);
+    }
+
+    if (group === "children") {
+      out = out.map((r) => ({
+        ...r,
+        value: (r.child_ltr_pedestrians_count ?? 0) + (r.child_rtl_pedestrians_count ?? 0),
+      }));
+    } else if (group === "adults") {
+      out = out.map((r) => ({
+        ...r,
+        value: (r.adult_ltr_pedestrians_count ?? 0) + (r.adult_rtl_pedestrians_count ?? 0),
+      }));
+    } else {
+      out = out.map((r) => ({
+        ...r,
+        value: r.pedestrians_count,
+      }));
+    }
+
+    return out;
+  }, [rows, weather, group]);
 
   return (
     <div className="app">
-      <Header meme={meme} setMeme={setMeme} />
-      {/* <Sidebar />*/}
+      <Header />
+
       <div className="content">
-        {<Map setInfo={setInfo} info={info} meme={meme} setMeme={setMeme} />}
+        <div className="layout">
+          <Sidebar
+            date={date}
+            setDate={setDate}
+            locations={locations}
+            location={location}
+            setLocation={setLocation}
+            zone={zone}
+            setZone={setZone}
+            group={group}
+            setGroup={setGroup}
+            weather={weather}
+            setWeather={setWeather}
+          />
+
+          <main className="main">
+            <div className="boards_content">
+              <h3 className="text">Backend JSON</h3>
+              <p className="text">
+                Endpoint: <span className="mono">/api/v1/pedData</span>
+              </p>
+              <p className="text">
+                ort: <span className="mono">{location || "-"}</span> datum:{" "}
+                <span className="mono">{datum}</span> zone: <span className="mono">{zone}</span>
+                {"  "}
+                wetter: <span className="mono">{weather}</span> gruppe: <span className="mono">{group}</span>
+              </p>
+
+              {loading && <p className="text">Laedt…</p>}
+              {error && <p className="text errorText">{error}</p>}
+              {!loading && !error && <JsonOut info={filtered} meme={false} />}
+            </div>
+
+            <footer className="footer">
+              <p className="text">Namen: Vorname Nachname, Vorname Nachname</p>
+            </footer>
+          </main>
+        </div>
       </div>
     </div>
   );
 }
-
-export default App;
