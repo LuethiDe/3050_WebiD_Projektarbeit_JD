@@ -23,25 +23,55 @@ export const Map = ({ data = [], location, date, group, weather }) => {
     return {
       data: { values: chartData },
       title: `${location} – ${date} – Gruppe: ${group} – Wetter: ${weather}`,
-      width: 600,
+      width: 850,
       height: 400,
       mark: { type: "point", filled: true },
+      scale: { bandPaddingInner: 0.2 },
+
+      size: {
+        condition: {
+          param: "clickSel",
+          value: 100,
+        },
+        value: 30,
+      },
+
+      params: [
+        { name: "brush", select: { type: "interval", encodings: ["x", "y"] } },
+        {
+          name: "legendSel",
+          select: { type: "point", fields: ["weather_condition"] },
+          bind: "legend",
+        },
+        {
+          name: "clickSel",
+          select: { type: "point", on: "click", toggle: "event.shiftKey" },
+        },
+      ],
+
       encoding: {
         x: {
-          field: "temperature",
+          field: "hour",
           type: "quantitative",
-          title: "Temperatur (°C)",
+          title: "Stunde",
         },
         y: {
           field: "pedestrians_count",
           type: "quantitative",
           title: "Anz. Personen",
         },
+        opacity: {
+          condition: {
+            param: "brush",
+            value: 1,
+          },
+          value: 0.15,
+        },
         tooltip: [
           {
-            field: "temperature",
+            field: "hour",
             type: "quantitative",
-            title: "Temperatur (°C)",
+            title: "Stunde",
           },
           {
             field: "pedestrians_count",
@@ -71,11 +101,11 @@ export const Map = ({ data = [], location, date, group, weather }) => {
       <div ref={chartRef}></div>
       <div>Datenpunkte: {data.length}</div>
       <div>
-        {location} – {date} – Gruppe: {group} – Wetter: {weather}
+        {location} – {date}– Gruppe: {group} – Wetter: {weather}
       </div>
 
       <pre style={{ fontSize: 12, maxHeight: 250, overflow: "auto" }}>
-        {JSON.stringify(data[0], null, 2)}
+        {JSON.stringify(data[8], null, 2)}
       </pre>
     </div>
   );
