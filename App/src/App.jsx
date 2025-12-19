@@ -80,8 +80,12 @@ export default function App() {
   const filtered = useMemo(() => {
     let out = rows;
 
+    {
+      /* Filter robust gemacht */
+    }
     if (weather !== "all") {
-      out = out.filter((r) => r.weather_condition === weather);
+      const w = String(weather).trim();
+      out = out.filter((r) => String(r.weather_condition ?? "").trim() === w);
     }
 
     if (group === "children") {
@@ -107,6 +111,11 @@ export default function App() {
 
     return out;
   }, [rows, weather, group]);
+
+  console.log("weather selected:", weather);
+  console.log("unique weather_condition in rows:", [
+    ...new Set(rows.map((r) => r.weather_condition)),
+  ]);
 
   return (
     <div className="app">
@@ -142,10 +151,24 @@ export default function App() {
                 wetter: <span className="mono">{weather}</span> gruppe:{" "}
                 <span className="mono">{group}</span>
               </p>
+              <p>Debugfilter</p>
+              <p>Problem Wetter: Wenn nicht ≠ All, wird dar Filter gekillt</p>
+              <p>Problem Datum: Jahr darf nicht 2025 sein?</p>
+              <p className="text">
+                rows: <span className="mono">{rows.length}</span> filtered:{" "}
+                <span className="mono">{filtered.length}</span>
+              </p>
 
               {loading && <p className="text">Laedt…</p>}
               {error && <p className="text errorText">{error}</p>}
-              {!loading && !error && <JsonOut data={filtered} />}
+              <JsonOut
+                data={filtered}
+                location={location}
+                date={datum}
+                zone={zone}
+                group={group}
+                weather={weather}
+              />
             </div>
 
             <Footer />

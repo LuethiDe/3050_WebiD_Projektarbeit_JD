@@ -17,10 +17,14 @@ import "dayjs/locale/de"; // Deutsche Locale für Datumsformat
 dayjs.locale("de"); // Day.js auf Deutsch setzen damit der DatePicker DD.MM.YYYY nutzt
 
 // React-Leaflet (interaktive Mini-Karte) und das zugehörige CSS
-import { MapContainer, TileLayer, Polygon, Tooltip, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Polygon,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-
-
 
 // Wetteroptionen für das Auswahlfeld
 const WEATHER_OPTIONS = [
@@ -149,7 +153,9 @@ export const Sidebar = ({
   const geoNamesSorted = preferredOrder.filter((n) => geoNames.includes(n));
   // Gewünschte Reihenfolge: Nord, Mitte, Süd, Lintheschergasse
   // Zusammenführen: zuerst die vorgegebenen Geo-Namen, danach andere Backend-Locations
-  const otherLocations = (locations || []).filter((l) => !geoNamesSorted.includes(l));
+  const otherLocations = (locations || []).filter(
+    (l) => !geoNamesSorted.includes(l)
+  );
   const allLocationOptions = [...geoNamesSorted, ...otherLocations];
 
   // Berechnet alle bounding boxen für alle polygon für initiale kartenansicht
@@ -166,7 +172,10 @@ export const Sidebar = ({
         if (lon > maxLon) maxLon = lon;
       });
     });
-    return [[minLat, minLon], [maxLat, maxLon]];
+    return [
+      [minLat, minLon],
+      [maxLat, maxLon],
+    ];
   })();
 
   // MapUpdater benutzt Leaflet map instanz via usemap and passt die Ansicht an die übergebenen Bounds an.
@@ -203,7 +212,11 @@ export const Sidebar = ({
       <Box sx={{ mb: 2 }}>
         <FormControl fullWidth size="small">
           <InputLabel>Location</InputLabel>
-          <Select label="Location" value={location || ""} onChange={(e) => setLocation(e.target.value)}>
+          <Select
+            label="Location"
+            value={location || ""}
+            onChange={(e) => setLocation(e.target.value)}
+          >
             {allLocationOptions.map((loc) => (
               <MenuItem key={loc} value={loc}>
                 {loc}
@@ -216,9 +229,20 @@ export const Sidebar = ({
       {/* Mini-map Leaflet. */}
       <Box sx={{ mt: 2, mb: 2 }}>
         <div style={{ marginTop: 8 }}>
-          <div style={{ width: "100%", height: 220, borderRadius: 8, overflow: "hidden", border: "1px solid #ccc" }}>
+          <div
+            style={{
+              width: "100%",
+              height: 220,
+              borderRadius: 8,
+              overflow: "hidden",
+              border: "1px solid #ccc",
+            }}
+          >
             <MapContainer
-              center={[(combinedBounds[0][0] + combinedBounds[1][0]) / 2, (combinedBounds[0][1] + combinedBounds[1][1]) / 2]}
+              center={[
+                (combinedBounds[0][0] + combinedBounds[1][0]) / 2,
+                (combinedBounds[0][1] + combinedBounds[1][1]) / 2,
+              ]}
               zoom={15}
               style={{ width: "100%", height: "100%" }}
               scrollWheelZoom={false}
@@ -242,13 +266,25 @@ export const Sidebar = ({
                     eventHandlers={{ click: () => setLocation(g.name) }}
                     pathOptions={
                       isSelected
-                        ? { color: "#c62828", weight: 2, fillColor: "#ff0000", fillOpacity: 0.25 }
-                        : { color: "#666", weight: 1, fillColor: "#999", fillOpacity: 0.12 }
+                        ? {
+                            color: "#c62828",
+                            weight: 2,
+                            fillColor: "#ff0000",
+                            fillOpacity: 0.25,
+                          }
+                        : {
+                            color: "#666",
+                            weight: 1,
+                            fillColor: "#999",
+                            fillOpacity: 0.12,
+                          }
                     }
                   >
                     {/* Tooltip werden angezeigt beim Hovern (Sticky folgt Maus). */}
                     <Tooltip direction="center" sticky>
-                      <span style={{ fontSize: 12, fontWeight: 600 }}>{g.name}</span>
+                      <span style={{ fontSize: 12, fontWeight: 600 }}>
+                        {g.name}
+                      </span>
                     </Tooltip>
                   </Polygon>
                 );
@@ -263,7 +299,11 @@ export const Sidebar = ({
       <Box sx={{ mb: 2 }}>
         <FormControl fullWidth size="small">
           <InputLabel>Personengruppe</InputLabel>
-          <Select label="Personengruppe" value={group} onChange={(e) => setGroup(e.target.value)}>
+          <Select
+            label="Personengruppe"
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+          >
             <MenuItem value="all">Alle</MenuItem>
             <MenuItem value="children">Kinder</MenuItem>
             <MenuItem value="adults">Erwachsene</MenuItem>
@@ -274,7 +314,11 @@ export const Sidebar = ({
       <Box sx={{ mb: 2 }}>
         <FormControl fullWidth size="small" disabled={zoneDisabled}>
           <InputLabel>Zone</InputLabel>
-          <Select label="Zone" value={zone} onChange={(e) => setZone(e.target.value)}>
+          <Select
+            label="Zone"
+            value={zone}
+            onChange={(e) => setZone(e.target.value)}
+          >
             <MenuItem value="all">Alle</MenuItem>
             <MenuItem value="1">1</MenuItem>
             <MenuItem value="2">2</MenuItem>
@@ -289,10 +333,14 @@ export const Sidebar = ({
       <Box sx={{ mb: 1 }}>
         <FormControl fullWidth size="small">
           <InputLabel>Wetter</InputLabel>
-          <Select label="Wetter" value={weather} onChange={(e) => setWeather(e.target.value)}>
+          <Select
+            label="Wetter"
+            value={weather}
+            onChange={(e) => setWeather(e.target.value)}
+          >
             {WEATHER_OPTIONS.map((w) => (
               <MenuItem key={w} value={w}>
-                {w}
+                {w === "all" ? "All" : w}
               </MenuItem>
             ))}
           </Select>
