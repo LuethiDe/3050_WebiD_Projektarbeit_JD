@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { Map as JsonOut } from "./Map";
+import Footer from "./Footer";
 
 import "./App.css";
 
@@ -137,9 +138,7 @@ export default function App() {
               {!loading && !error && <JsonOut info={filtered} meme={false} />}
             </div>
 
-            <footer className="footer">
-              <p className="text">Namen: Vorname Nachname, Vorname Nachname</p>
-            </footer>
+            <Footer />
           </main>
         </div>
       </div>

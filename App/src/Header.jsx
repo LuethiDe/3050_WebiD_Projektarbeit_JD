@@ -23,10 +23,11 @@ export const Header = () => (
         sx={{
           display: "flex",
           flexWrap: "wrap",
+          alignItems: "stretch",
           "& > :not(style)": {
             m: 1,
-            width: 440,
-            height: 285,
+            flex: "1 1 440px",
+            minWidth: 280,
           },
         }}
       >
@@ -41,10 +42,7 @@ export const Header = () => (
             können.
           </p>
         </Box>
-        <Box className="boardsPreface boardsPrefaceHover" sx={{ p: 2 }}>
-          <p className="text">Ergebnis</p>
-          <p className="text">Müssen wir noch schreiben...</p>
-        </Box>
+
         <Box className="boardsPreface boardsPrefaceHover" sx={{ p: 2 }}>
           <p className="text">Datensatz</p>
           <p className="text">
