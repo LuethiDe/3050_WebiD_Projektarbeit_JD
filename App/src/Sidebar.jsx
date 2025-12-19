@@ -202,7 +202,9 @@ export const Sidebar = ({
           <DatePicker
             label="Datum"
             value={date}
-            onChange={(v) => v && setDate(v)}
+            onChange={(v) => setDate(v)}
+            minDate={dayjs("2021-09-28")}
+            maxDate={dayjs("2025-07-29")}
             inputFormat="DD.MM.YYYY"
             mask="__.__.____"
             slotProps={{ textField: { size: "small", fullWidth: true } }}

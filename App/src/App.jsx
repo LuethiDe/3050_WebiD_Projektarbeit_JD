@@ -153,7 +153,7 @@ export default function App() {
               </p>
               <p>Debugfilter</p>
               <p>Problem Wetter: Wenn nicht ≠ All, wird dar Filter gekillt</p>
-              <p>Problem Datum: Jahr darf nicht 2025 sein?</p>
+              <p>Problem Datum: max ist 30.7.2025</p>
               <p className="text">
                 rows: <span className="mono">{rows.length}</span> filtered:{" "}
                 <span className="mono">{filtered.length}</span>
