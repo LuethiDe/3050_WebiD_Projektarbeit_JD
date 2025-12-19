@@ -27,10 +27,12 @@ import {
 import "leaflet/dist/leaflet.css";
 
 // Wetteroptionen für das Auswahlfeld
+// "partly-cloudy-night" hinzugefügt, weil sonst ein Fehler in der Map-Komponente auftritt
 const WEATHER_OPTIONS = [
   "all",
   "clear-day",
   "partly-cloudy-day",
+  "partly-cloudy-night",
   "cloudy",
   "rain",
   "snow",
