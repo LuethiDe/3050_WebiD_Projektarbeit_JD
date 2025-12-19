@@ -43,10 +43,14 @@ export default function App() {
     fetch(buildLocationsUrl(datum))
       .then((r) => r.json())
       .then((payload) => {
-        const list = Array.isArray(payload) && payload[0]?.locations ? payload[0].locations : [];
+        const list =
+          Array.isArray(payload) && payload[0]?.locations
+            ? payload[0].locations
+            : [];
         setLocations(list);
         if (!location && list.length) setLocation(list[0]);
-        if (location && list.length && !list.includes(location)) setLocation(list[0]);
+        if (location && list.length && !list.includes(location))
+          setLocation(list[0]);
       })
       .catch((e) => {
         setLocations([]);
@@ -83,12 +87,16 @@ export default function App() {
     if (group === "children") {
       out = out.map((r) => ({
         ...r,
-        value: (r.child_ltr_pedestrians_count ?? 0) + (r.child_rtl_pedestrians_count ?? 0),
+        value:
+          (r.child_ltr_pedestrians_count ?? 0) +
+          (r.child_rtl_pedestrians_count ?? 0),
       }));
     } else if (group === "adults") {
       out = out.map((r) => ({
         ...r,
-        value: (r.adult_ltr_pedestrians_count ?? 0) + (r.adult_rtl_pedestrians_count ?? 0),
+        value:
+          (r.adult_ltr_pedestrians_count ?? 0) +
+          (r.adult_rtl_pedestrians_count ?? 0),
       }));
     } else {
       out = out.map((r) => ({
@@ -128,14 +136,16 @@ export default function App() {
               </p>
               <p className="text">
                 ort: <span className="mono">{location || "-"}</span> datum:{" "}
-                <span className="mono">{datum}</span> zone: <span className="mono">{zone}</span>
+                <span className="mono">{datum}</span> zone:{" "}
+                <span className="mono">{zone}</span>
                 {"  "}
-                wetter: <span className="mono">{weather}</span> gruppe: <span className="mono">{group}</span>
+                wetter: <span className="mono">{weather}</span> gruppe:{" "}
+                <span className="mono">{group}</span>
               </p>
 
               {loading && <p className="text">Laedt…</p>}
               {error && <p className="text errorText">{error}</p>}
-              {!loading && !error && <JsonOut info={filtered} meme={false} />}
+              {!loading && !error && <JsonOut data={filtered} />}
             </div>
 
             <Footer />
