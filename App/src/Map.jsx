@@ -1,4 +1,3 @@
-
 // React Hooks und externe Bibliotheken importieren
 import { useEffect, useMemo, useRef, useState } from "react";
 import Alert from "@mui/material/Alert";
@@ -9,8 +8,10 @@ function getPeopleByGroup(row, group) {
   const n = (x) => Number(x ?? 0);
 
   const total = n(row.pedestrians_count);
-  const adults = n(row.adult_ltr_pedestrians_count) + n(row.adult_rtl_pedestrians_count);
-  const children = n(row.child_ltr_pedestrians_count) + n(row.child_rtl_pedestrians_count);
+  const adults =
+    n(row.adult_ltr_pedestrians_count) + n(row.adult_rtl_pedestrians_count);
+  const children =
+    n(row.child_ltr_pedestrians_count) + n(row.child_rtl_pedestrians_count);
 
   if (group === "adults") return adults;
   if (group === "children") return children;
@@ -46,7 +47,9 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
       })
       .filter(
         (dataPoint) =>
-          dataPoint.temperature !== null && Number.isFinite(dataPoint.people) && dataPoint.people >= 0
+          dataPoint.temperature !== null &&
+          Number.isFinite(dataPoint.people) &&
+          dataPoint.people >= 0
       );
   }, [data, group]);
 
@@ -132,8 +135,17 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
       {/* Diagramm-Container */}
       <div style={{ padding: 20, paddingBottom: 0 }} ref={chartRef} />
       {/* Beschreibung unter dem Diagramm */}
-      <div className="text" style={{ padding: 20, paddingTop: 0 }}>
-        Fokusfrage: Wie beeinflussen unterschiedliche Wetterbedingungen die stündliche Passantenfrequenz an ausgewählten Standorten?
+      <div
+        className="text"
+        style={{
+          paddingLeft: 20,
+          paddingTop: 0,
+          paddingBottom: 20,
+          marginRight: -10,
+        }}
+      >
+        Fokusfrage: Wie beeinflussen unterschiedliche Wetterbedingungen die
+        stündliche Passantenfrequenz an ausgewählten Standorten?
         <br />
         Die Grafik zeigt die Personenzahl pro Stunde und Wetterbedingung.
         <br />
