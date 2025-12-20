@@ -115,13 +115,7 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
 
   return (
     <div>
-      <div style={{ padding: 20, paddingBottom: 0 }} ref={chartRef} />
-      <div className="text" style={{ padding: 20, paddingTop: 0 }}>
-        Die Grafik zeigt die Personenzahl pro Stunde und Wetterbedingung.
-        <br />
-        Hierbei kann der Output über die Einstellungen nach Datum, Location,
-        Personengruppe, Zone und Wetter gefiltert werden.
-      </div>
+      <div style={{ padding: 20 }} ref={chartRef} />
     </div>
   );
 };

@@ -3,9 +3,9 @@ import dayjs from "dayjs";
 
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
-import { Map as JsonOut } from "./Map";
+import { Map as JsonToChart1 } from "./Map";
+import { Map as JsonToChart2 } from "./Map2";
 import Footer from "./Footer";
-import VegaChart from "./VegaChart";
 
 import "./App.css";
 
@@ -26,7 +26,7 @@ function buildLocationsUrl(datum) {
 }
 
 export default function App() {
-  const [date, setDate] = useState(dayjs("2025-07-29"));
+  const [date, setDate] = useState(dayjs().subtract(1, "day"));
   const [locations, setLocations] = useState([]);
   const [location, setLocation] = useState("");
   const [zone, setZone] = useState("all");
@@ -44,10 +44,14 @@ export default function App() {
     fetch(buildLocationsUrl(datum))
       .then((r) => r.json())
       .then((payload) => {
-        const list = Array.isArray(payload) && payload[0]?.locations ? payload[0].locations : [];
+        const list =
+          Array.isArray(payload) && payload[0]?.locations
+            ? payload[0].locations
+            : [];
         setLocations(list);
         if (!location && list.length) setLocation(list[0]);
-        if (location && list.length && !list.includes(location)) setLocation(list[0]);
+        if (location && list.length && !list.includes(location))
+          setLocation(list[0]);
       })
       .catch((e) => {
         setLocations([]);
@@ -77,19 +81,27 @@ export default function App() {
   const filtered = useMemo(() => {
     let out = rows;
 
+    {
+      /* Filter robust gemacht */
+    }
     if (weather !== "all") {
-      out = out.filter((r) => r.weather_condition === weather);
+      const w = String(weather).trim();
+      out = out.filter((r) => String(r.weather_condition ?? "").trim() === w);
     }
 
     if (group === "children") {
       out = out.map((r) => ({
         ...r,
-        value: (r.child_ltr_pedestrians_count ?? 0) + (r.child_rtl_pedestrians_count ?? 0),
+        value:
+          (r.child_ltr_pedestrians_count ?? 0) +
+          (r.child_rtl_pedestrians_count ?? 0),
       }));
     } else if (group === "adults") {
       out = out.map((r) => ({
         ...r,
-        value: (r.adult_ltr_pedestrians_count ?? 0) + (r.adult_rtl_pedestrians_count ?? 0),
+        value:
+          (r.adult_ltr_pedestrians_count ?? 0) +
+          (r.adult_rtl_pedestrians_count ?? 0),
       }));
     } else {
       out = out.map((r) => ({
@@ -100,6 +112,11 @@ export default function App() {
 
     return out;
   }, [rows, weather, group]);
+
+  console.log("weather selected:", weather);
+  console.log("unique weather_condition in rows:", [
+    ...new Set(rows.map((r) => r.weather_condition)),
+  ]);
 
   return (
     <div className="app">
@@ -123,25 +140,28 @@ export default function App() {
 
           <main className="main">
             <div className="boards_content">
-              <h3 className="text">Backend JSON</h3>
-              <p className="text">
-                Endpoint: <span className="mono">/api/v1/pedData</span>
-              </p>
-              <p className="text">
-                ort: <span className="mono">{location || "-"}</span> datum:{" "}
-                <span className="mono">{datum}</span> zone: <span className="mono">{zone}</span>
-                {"  "}
-                wetter: <span className="mono">{weather}</span> gruppe: <span className="mono">{group}</span>
-              </p>
-
               {loading && <p className="text">Laedt…</p>}
               {error && <p className="text errorText">{error}</p>}
-              {!loading && !error && (
-                <>
-                  <JsonOut info={filtered} meme={false} />
-                  <VegaChart data={filtered} />
-                </>
-              )}
+              <JsonToChart1
+                data={filtered}
+                location={location}
+                date={datum}
+                zone={zone}
+                group={group}
+                weather={weather}
+              />
+            </div>
+            <div className="boards_content">
+              {loading && <p className="text">Laedt…</p>}
+              {error && <p className="text errorText">{error}</p>}
+              <JsonToChart2
+                data={filtered}
+                location={location}
+                date={datum}
+                zone={zone}
+                group={group}
+                weather={weather}
+              />
             </div>
 
             <Footer />
