@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import Alert from "@mui/material/Alert";
 import vegaEmbed from "vega-embed";
 
 function getPeopleByGroup(r, group) {
@@ -55,25 +56,39 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
 
     return {
       data: { values: chartData },
-      title: `${location ?? ""} · ${
-        date ?? ""
-      } · Gruppe: ${groupLabel} · Wetter: ${weather ?? ""}`,
-      width: 700,
-      height: 380,
+      title: `${date ?? ""} · ${
+        location ?? ""
+      } ·  Gruppe: ${groupLabel} · Wetter: ${weather ?? ""}`,
+      width: 750,
+      height: 300,
 
-      mark: { type: "bar", tooltip: true },
+      mark: {
+        type: "bar",
+        tooltip: true,
+        filled: true,
+        opacity: 0.7,
+        width: 26,
+        position: "center",
+      },
+
+      background: "transparent",
+      view: {
+        fill: "#ffffff",
+        stroke: null,
+      },
 
       encoding: {
         x: {
-          field: "temperature",
-          type: "quantitative",
-          title: "Temperatur (°C)",
+          field: "hour",
+          type: "ordinal",
+          title: "Stunde",
+          axis: { labelAngle: 0 },
         },
         y: { field: "people", type: "quantitative", title: "Personen" },
+        color: { field: "weather_condition", type: "nominal", title: "Wetter" },
         tooltip: [
           { field: "temperature", type: "quantitative", title: "°C" },
           { field: "people", type: "quantitative", title: "Personen" },
-          { field: "hour", type: "ordinal", title: "Stunde" },
           { field: "weather_condition", type: "nominal", title: "Wetter" },
         ],
       },
@@ -91,10 +106,16 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
   if (error) return <div style={{ padding: 15 }}>Error: {error}</div>;
   if (!chartData.length)
     return (
-      <div style={{ padding: 15 }}>
-        Keine gültigen Temperatur/Personen-Daten.
+      <div style={{ padding: 20 }}>
+        <Alert severity="info">
+          Keine gültigen Temperatur/Personen-Daten gefunden.
+        </Alert>
       </div>
     );
 
-  return <div style={{ padding: 15 }} ref={chartRef} />;
+  return (
+    <div>
+      <div style={{ padding: 20 }} ref={chartRef} />
+    </div>
+  );
 };
