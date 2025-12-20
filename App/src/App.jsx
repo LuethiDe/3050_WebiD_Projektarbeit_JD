@@ -3,7 +3,8 @@ import dayjs from "dayjs";
 
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
-import { Map as JsonOut } from "./Map";
+import { Map as JsonToChart1 } from "./Map";
+import { Map as JsonToChart2 } from "./Map2";
 import Footer from "./Footer";
 
 import "./App.css";
@@ -141,7 +142,19 @@ export default function App() {
             <div className="boards_content">
               {loading && <p className="text">Laedt…</p>}
               {error && <p className="text errorText">{error}</p>}
-              <JsonOut
+              <JsonToChart1
+                data={filtered}
+                location={location}
+                date={datum}
+                zone={zone}
+                group={group}
+                weather={weather}
+              />
+            </div>
+            <div className="boards_content">
+              {loading && <p className="text">Laedt…</p>}
+              {error && <p className="text errorText">{error}</p>}
+              <JsonToChart2
                 data={filtered}
                 location={location}
                 date={datum}
