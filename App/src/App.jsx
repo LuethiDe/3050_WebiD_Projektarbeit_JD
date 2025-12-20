@@ -139,26 +139,6 @@ export default function App() {
 
           <main className="main">
             <div className="boards_content">
-              <h3 className="text">Backend JSON</h3>
-              <p className="text">
-                Endpoint: <span className="mono">/api/v1/pedData</span>
-              </p>
-              <p className="text">
-                ort: <span className="mono">{location || "-"}</span> datum:{" "}
-                <span className="mono">{datum}</span> zone:{" "}
-                <span className="mono">{zone}</span>
-                {"  "}
-                wetter: <span className="mono">{weather}</span> gruppe:{" "}
-                <span className="mono">{group}</span>
-              </p>
-              <p>Debugfilter</p>
-              <p>Problem Wetter: Wenn nicht ≠ All, wird dar Filter gekillt</p>
-              <p>Problem Datum: max ist 30.7.2025</p>
-              <p className="text">
-                rows: <span className="mono">{rows.length}</span> filtered:{" "}
-                <span className="mono">{filtered.length}</span>
-              </p>
-
               {loading && <p className="text">Laedt…</p>}
               {error && <p className="text errorText">{error}</p>}
               <JsonOut
