@@ -27,23 +27,40 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
   const [error, setError] = useState(null);
 
   const chartData = useMemo(() => {
-    return (Array.isArray(data) ? data : [])
-      .map((r) => {
-        const temperature = getTemp(r);
-        const people = getPeopleByGroup(r, group);
+    const rows = Array.isArray(data) ? data : [];
+    const n = (x) => Number(x ?? 0);
 
-        return {
-          temperature,
-          people,
-          hour: r.hour,
-          weather_condition: r.weather_condition,
-        };
+    return rows
+      .flatMap((r) => {
+        const hour = Number(r.hour ?? r.hour_of_day ?? r.hour);
+        const adults = n(r.adult_ltr_pedestrians_count) + n(r.adult_rtl_pedestrians_count);
+        const children = n(r.child_ltr_pedestrians_count) + n(r.child_rtl_pedestrians_count);
+
+        const out = [];
+        if (group === "all" || group === "adults") {
+          out.push({ hour, group: "Erwachsene", people: adults, weather_condition: r.weather_condition });
+        }
+        if (group === "all" || group === "children") {
+          out.push({ hour, group: "Kinder", people: children, weather_condition: r.weather_condition });
+        }
+
+        return out;
       })
-      .filter(
-        (d) =>
-          d.temperature !== null && Number.isFinite(d.people) && d.people >= 0
-      );
+      .filter((d) => Number.isFinite(d.hour) && Number.isFinite(d.people) && d.people >= 0);
   }, [data, group]);
+
+  // If there are no valid person records, generate placeholder zero-values
+  // so the chart still renders with fixed axes/bins for all 24 hours.
+  const displayData = useMemo(() => {
+    if (chartData.length) return chartData;
+
+    const out = [];
+    for (let h = 0; h < 24; h++) {
+      if (group === "all" || group === "adults") out.push({ hour: h, group: "Erwachsene", people: 0 });
+      if (group === "all" || group === "children") out.push({ hour: h, group: "Kinder", people: 0 });
+    }
+    return out;
+  }, [chartData, group]);
 
   const spec = useMemo(() => {
     const groupLabel =
@@ -54,10 +71,10 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
         : "Alle";
 
     return {
-      data: { values: chartData },
-      title: `${location ?? ""} · ${
-        date ?? ""
-      } · Gruppe: ${groupLabel} · Wetter: ${weather ?? ""}`,
+      $schema: "https://vega.github.io/schema/vega-lite/v6.json",
+      autosize: { type: "pad", contains: "padding" },
+      data: { values: displayData },
+      title: `${location ?? ""} · ${date ?? ""} · Gruppe: ${groupLabel} · Wetter: ${weather ?? ""}`,
       width: 700,
       height: 380,
 
@@ -65,20 +82,32 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
 
       encoding: {
         x: {
-          field: "temperature",
+          field: "hour",
           type: "quantitative",
-          title: "Temperatur (°C)",
+          bin: { step: 1, extent: [0, 24] },
+          title: "Uhrzeit",
+          axis: { labelAngle: 0, format: "d", values: Array.from({ length: 24 }, (_, i) => i) },
         },
-        y: { field: "people", type: "quantitative", title: "Personen" },
+        y: {
+          aggregate: "sum",
+          field: "people",
+          type: "quantitative",
+          title: "Personen",
+        },
+        color: {
+          field: "group",
+          type: "nominal",
+          title: "Gruppe",
+          scale: { domain: ["Kinder", "Erwachsene"], range: ["#FFA500", "#1f77b4"] },
+        },
         tooltip: [
-          { field: "temperature", type: "quantitative", title: "°C" },
-          { field: "people", type: "quantitative", title: "Personen" },
-          { field: "hour", type: "ordinal", title: "Stunde" },
-          { field: "weather_condition", type: "nominal", title: "Wetter" },
+          { field: "hour", type: "quantitative", title: "Stunde" },
+          { field: "group", type: "nominal", title: "Gruppe" },
+          { aggregate: "sum", field: "people", type: "quantitative", title: "Personen" },
         ],
       },
     };
-  }, [chartData, location, date, group, weather]);
+  }, [displayData, location, date, group, weather]);
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -89,12 +118,5 @@ export const Map = ({ data = [], location, date, group = "all", weather }) => {
   }, [spec]);
 
   if (error) return <div style={{ padding: 15 }}>Error: {error}</div>;
-  if (!chartData.length)
-    return (
-      <div style={{ padding: 15 }}>
-        Keine gültigen Temperatur/Personen-Daten.
-      </div>
-    );
-
   return <div style={{ padding: 15 }} ref={chartRef} />;
 };
