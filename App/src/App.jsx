@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { Map as JsonToChart1 } from "./Map";
-import { Map as JsonToChart2 } from "./Map2";
 import Footer from "./Footer";
 
 import "./App.css";
@@ -33,7 +32,7 @@ function buildLocationsUrl(datum) {
 // Hauptkomponente der App
 export default function App() {
   // Zustand für das gewählte Datum
-  const [date, setDate] = useState(dayjs('2021-09-29'));
+  const [date, setDate] = useState(dayjs("2021-09-29"));
   // Liste aller verfügbaren Standorte
   const [locations, setLocations] = useState([]);
   // Aktuell ausgewählter Standort
@@ -76,7 +75,6 @@ export default function App() {
       });
   }, [datum]);
 
-
   // Effekt: Fussgänger-Daten für den gewählten Standort, das Datum und die Zone laden
   useEffect(() => {
     if (!location) return;
@@ -97,7 +95,6 @@ export default function App() {
       .finally(() => setLoading(false));
   }, [location, datum, zone]);
 
-
   // Filtert und bereitet die Daten für das Diagramm je nach Filtereinstellungen auf
   const filtered = useMemo(() => {
     let out = rows;
@@ -105,7 +102,9 @@ export default function App() {
     // Nach Wetter filtern
     if (weather !== "all") {
       const w = String(weather).trim();
-      out = out.filter((row) => String(row.weather_condition ?? "").trim() === w);
+      out = out.filter(
+        (row) => String(row.weather_condition ?? "").trim() === w
+      );
     }
 
     // Nach Personengruppe aggregieren
@@ -132,7 +131,6 @@ export default function App() {
 
     return out;
   }, [rows, weather, group]);
-
 
   // Debug-Ausgaben für Wetterauswahl und verfügbare Wetterbedingungen
   console.log("weather selected:", weather);
@@ -168,19 +166,6 @@ export default function App() {
               {loading && <p className="text">Laedt…</p>}
               {error && <p className="text errorText">{error}</p>}
               <JsonToChart1
-                data={filtered}
-                location={location}
-                date={datum}
-                zone={zone}
-                group={group}
-                weather={weather}
-              />
-            </div>
-            {/* Zweites Diagramm */}
-            <div className="boards_content">
-              {loading && <p className="text">Laedt…</p>}
-              {error && <p className="text errorText">{error}</p>}
-              <JsonToChart2
                 data={filtered}
                 location={location}
                 date={datum}
