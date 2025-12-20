@@ -5,6 +5,7 @@ import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { Map as JsonOut } from "./Map";
 import Footer from "./Footer";
+import VegaChart from "./VegaChart";
 
 import "./App.css";
 
@@ -25,7 +26,7 @@ function buildLocationsUrl(datum) {
 }
 
 export default function App() {
-  const [date, setDate] = useState(dayjs().subtract(1, "day"));
+  const [date, setDate] = useState(dayjs("2025-07-29"));
   const [locations, setLocations] = useState([]);
   const [location, setLocation] = useState("");
   const [zone, setZone] = useState("all");
@@ -43,14 +44,10 @@ export default function App() {
     fetch(buildLocationsUrl(datum))
       .then((r) => r.json())
       .then((payload) => {
-        const list =
-          Array.isArray(payload) && payload[0]?.locations
-            ? payload[0].locations
-            : [];
+        const list = Array.isArray(payload) && payload[0]?.locations ? payload[0].locations : [];
         setLocations(list);
         if (!location && list.length) setLocation(list[0]);
-        if (location && list.length && !list.includes(location))
-          setLocation(list[0]);
+        if (location && list.length && !list.includes(location)) setLocation(list[0]);
       })
       .catch((e) => {
         setLocations([]);
@@ -80,27 +77,19 @@ export default function App() {
   const filtered = useMemo(() => {
     let out = rows;
 
-    {
-      /* Filter robust gemacht */
-    }
     if (weather !== "all") {
-      const w = String(weather).trim();
-      out = out.filter((r) => String(r.weather_condition ?? "").trim() === w);
+      out = out.filter((r) => r.weather_condition === weather);
     }
 
     if (group === "children") {
       out = out.map((r) => ({
         ...r,
-        value:
-          (r.child_ltr_pedestrians_count ?? 0) +
-          (r.child_rtl_pedestrians_count ?? 0),
+        value: (r.child_ltr_pedestrians_count ?? 0) + (r.child_rtl_pedestrians_count ?? 0),
       }));
     } else if (group === "adults") {
       out = out.map((r) => ({
         ...r,
-        value:
-          (r.adult_ltr_pedestrians_count ?? 0) +
-          (r.adult_rtl_pedestrians_count ?? 0),
+        value: (r.adult_ltr_pedestrians_count ?? 0) + (r.adult_rtl_pedestrians_count ?? 0),
       }));
     } else {
       out = out.map((r) => ({
@@ -111,11 +100,6 @@ export default function App() {
 
     return out;
   }, [rows, weather, group]);
-
-  console.log("weather selected:", weather);
-  console.log("unique weather_condition in rows:", [
-    ...new Set(rows.map((r) => r.weather_condition)),
-  ]);
 
   return (
     <div className="app">
@@ -145,30 +129,19 @@ export default function App() {
               </p>
               <p className="text">
                 ort: <span className="mono">{location || "-"}</span> datum:{" "}
-                <span className="mono">{datum}</span> zone:{" "}
-                <span className="mono">{zone}</span>
+                <span className="mono">{datum}</span> zone: <span className="mono">{zone}</span>
                 {"  "}
-                wetter: <span className="mono">{weather}</span> gruppe:{" "}
-                <span className="mono">{group}</span>
-              </p>
-              <p>Debugfilter</p>
-              <p>Problem Wetter: Wenn nicht ≠ All, wird dar Filter gekillt</p>
-              <p>Problem Datum: max ist 30.7.2025</p>
-              <p className="text">
-                rows: <span className="mono">{rows.length}</span> filtered:{" "}
-                <span className="mono">{filtered.length}</span>
+                wetter: <span className="mono">{weather}</span> gruppe: <span className="mono">{group}</span>
               </p>
 
               {loading && <p className="text">Laedt…</p>}
               {error && <p className="text errorText">{error}</p>}
-              <JsonOut
-                data={filtered}
-                location={location}
-                date={datum}
-                zone={zone}
-                group={group}
-                weather={weather}
-              />
+              {!loading && !error && (
+                <>
+                  <JsonOut info={filtered} meme={false} />
+                  <VegaChart data={filtered} />
+                </>
+              )}
             </div>
 
             <Footer />
